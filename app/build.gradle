@@ -88,10 +88,6 @@ dependencies {
 //    implementation "androidx.activity:activity-compose:1.8.0-alpha01"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.24.2-alpha"
 
-    // Compose Nav Destinations
-    implementation 'io.github.raamcosta.compose-destinations:core:1.1.2-beta'
-    ksp 'io.github.raamcosta.compose-destinations:ksp:1.1.2-beta'
-
     // Coil
     implementation "io.coil-kt:coil-compose:2.2.2"
 
@@ -99,7 +95,7 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     kapt "androidx.hilt:hilt-compiler:1.0.0"
-    implementation 'androidx.hilt:hilt-navigation-compose:1.0.0'
+    implementation "androidx.hilt:hilt-navigation-compose:1.1.0-alpha01"
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
