@@ -21,6 +21,10 @@ class CompanyListingsViewModel @Inject constructor(private val repository: Stock
 
     private var searchJob: Job? = null
 
+    init {
+        getCompanyListings()
+    }
+
     fun onEvent(event: CompanyListingsEvent) {
         when (event) {
             is CompanyListingsEvent.Refresh -> getCompanyListings(fetchFromRemote = true)
