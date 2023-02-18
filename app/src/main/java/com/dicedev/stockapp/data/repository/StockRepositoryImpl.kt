@@ -1,7 +1,9 @@
 package com.dicedev.stockapp.data.repository
 
+import com.dicedev.stockapp.data.csv.CSVParser
 import com.dicedev.stockapp.data.local.StockDao
 import com.dicedev.stockapp.data.mapper.toCompanyListing
+import com.dicedev.stockapp.data.mapper.toCompanyListingEntity
 import com.dicedev.stockapp.data.remote.StockApi
 import com.dicedev.stockapp.domain.model.CompanyListing
 import com.dicedev.stockapp.domain.repository.StockRepository
@@ -16,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class StockRepositoryImpl @Inject constructor(
     private val api: StockApi,
-    private val dao: StockDao
+    private val dao: StockDao,
+    private val parser: CSVParser<CompanyListing>
 ) : StockRepository {
     override suspend fun getCompanyListings(
         fetchFromRemote: Boolean,
@@ -35,10 +38,11 @@ class StockRepositoryImpl @Inject constructor(
 
         val remoteCompanyListing = try {
             val response = api.getListings()
-            response.byteStream()
+            parser.parse(response.byteStream())
         } catch (e: HttpException) {
             e.printStackTrace()
             emit(Resource.Error(e.localizedMessage ?: "An unexpected error occurred."))
+            null
         } catch (e: IOException) {
             e.printStackTrace()
             emit(
@@ -47,6 +51,14 @@ class StockRepositoryImpl @Inject constructor(
                         ?: "Could not connect to server. Check internet connection and try again."
                 )
             )
+            null
+        }
+
+        remoteCompanyListing?.let { listings ->
+            dao.clearCompanyListings()
+            dao.insertCompanyListings(listings.map { it.toCompanyListingEntity() })
+            val localListing = dao.searchCompanyListing("").map { it.toCompanyListing() }
+            emit(Resource.Success(localListing))
         }
     }
 }
