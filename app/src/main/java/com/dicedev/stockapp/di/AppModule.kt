@@ -2,12 +2,9 @@ package com.dicedev.stockapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.dicedev.stockapp.data.csv.CompanyListingsParser
 import com.dicedev.stockapp.data.local.StockDao
 import com.dicedev.stockapp.data.local.StockDatabase
 import com.dicedev.stockapp.data.remote.StockApi
-import com.dicedev.stockapp.data.repository.StockRepositoryImpl
-import com.dicedev.stockapp.domain.repository.StockRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,17 +39,4 @@ object AppModule {
             .build()
             .create(StockApi::class.java)
     }
-
-    @Singleton
-    @Provides
-    fun provideCSVParser(): CompanyListingsParser = CompanyListingsParser()
-
-    @Singleton
-    @Provides
-    fun provideStockRepository(
-        api: StockApi,
-        dao: StockDao,
-        parser: CompanyListingsParser
-    ): StockRepository =
-        StockRepositoryImpl(api, dao, parser)
 }
